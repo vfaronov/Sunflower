@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import os
 import urllib.parse
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 from sunflower import common
 from sunflower.plugin_base.plugin import PluginBase
 from sunflower.plugin_base.provider import Mode as FileMode
@@ -200,6 +200,7 @@ class ItemList(PluginBase):
 
 		# add all methods to group
 		group.add_method('execute_item', _('Execute selected item'), self._execute_selected_item)
+		group.add_method('execute_and_close', _('Execute and close'), self._execute_and_close)
 		group.add_method('execute_with_application', _('Select application and execute item'), self._execute_with_application)
 		group.add_method('item_properties', _('Show selected item properties'), self._item_properties)
 		group.add_method('add_bookmark', _('Bookmark current directory'), self._add_bookmark)
@@ -793,6 +794,10 @@ class ItemList(PluginBase):
 	def _execute_selected_item(self, widget=None, data=None):
 		"""Execute selected item"""
 		return True
+
+	def _execute_and_close(self, widget=None, data=None):
+		if self._execute_selected_item(widget, data):
+			GObject.idle_add(self._parent._quit)
 
 	def _execute_with_application(self, widget=None, data=None):
 		"""Show application selection dialog and then execute item"""
